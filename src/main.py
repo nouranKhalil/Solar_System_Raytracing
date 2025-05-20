@@ -4,7 +4,6 @@ from utils.window_renderer import WindowRenderer
 from objects.planet import Planet
 import numpy as np
 import pyrr
-from PIL import Image
 
 # constants
 WINDOW_WIDTH = 1000
@@ -28,15 +27,17 @@ def main():
 
     venus = Planet(
         r=0.5,
-        texture_path="assets/texture/planets/earth_nasa.png",
+        texture_path="assets/texture/planets/venus.png",
         sectors=SECTORS,
         stacks=STACKS,
         rotation_speed=0.5,
     )
 
     glUseProgram(renderer.shader)
+
+    camera_pos = np.array([0.0, 0.0, 2.0], dtype=np.float32)
     view = pyrr.matrix44.create_look_at(
-        eye=np.array([0.0, 0.0, 3.0]),
+        eye=camera_pos,
         target=np.array([0.0, 0.0, 0.0]),
         up=np.array([0.0, 1.0, 0.0]),
         dtype=np.float32,
@@ -50,13 +51,26 @@ def main():
         dtype=np.float32,
     )
 
+    light_pos = pyrr.Vector3([-5.0, 5.0, 5.0])
+    light_color = pyrr.Vector3([1.0, 0.95, 0.85])  # warm light to resemble the sun
+
     view_loc = glGetUniformLocation(renderer.shader, "view")
     projection_loc = glGetUniformLocation(renderer.shader, "projection")
     model_loc = glGetUniformLocation(renderer.shader, "model")
 
+    light_pos_loc = glGetUniformLocation(renderer.shader, "lightPos")
+    light_color_loc = glGetUniformLocation(renderer.shader, "lightColor")
+    view_pos_loc = glGetUniformLocation(renderer.shader, "viewPos")
+
     glUniformMatrix4fv(view_loc, 1, GL_FALSE, view)
     glUniformMatrix4fv(projection_loc, 1, GL_FALSE, projection)
+
+    glUniform3fv(light_pos_loc, 1, light_pos)
+    glUniform3fv(light_color_loc, 1, light_color)
+    glUniform3fv(view_pos_loc, 1, camera_pos)
+
     glEnable(GL_DEPTH_TEST)
+    glClearColor(1, 1, 1, 1)
 
     while not glfw.window_should_close(renderer.window):
         glfw.poll_events()

@@ -5,6 +5,7 @@ from OpenGL.GL import *
 import pyrr
 from objects.sphere import Sphere
 
+
 class Planet:
     """
     A class to represent a textured, rotating 3D planet using OpenGL.
@@ -37,7 +38,7 @@ class Planet:
 
         # Generate sphere geometry
         self.sphere = Sphere(r=self.radius, sectors=self.sectors, stacks=self.stacks)
-        self.vertices, self.tex_coords = self.sphere.build_sphere_points()
+        self.vertices, self.tex_coords, self.normals = self.sphere.build_sphere_points()
         self.indices, self.line_indices = self.sphere.build_indices()
 
         # Prepare OpenGL buffers and load texture
@@ -112,20 +113,28 @@ class Planet:
         glBindVertexArray(self.vao)
 
         # Combine position and texture coordinates into one vertex array
-        vertex_data = self.sphere.combine_coordinates(self.vertices, self.tex_coords)
+        vertex_data = self.sphere.combine_coordinates(
+            self.vertices, self.tex_coords, self.normals
+        )
 
         # Generate and bind Vertex Buffer Object
         self.vbo = glGenBuffers(1)
         glBindBuffer(GL_ARRAY_BUFFER, self.vbo)
         glBufferData(GL_ARRAY_BUFFER, vertex_data.nbytes, vertex_data, GL_STATIC_DRAW)
 
-        # Define position attribute (location = 0)
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * 4, ctypes.c_void_p(0))
+
+        # Position (location = 0)
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * 4, ctypes.c_void_p(0))
         glEnableVertexAttribArray(0)
 
-        # Define texture coordinate attribute (location = 1)
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * 4, ctypes.c_void_p(3 * 4))
+        # Normal (location = 2)
+        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * 4, ctypes.c_void_p(3 * 4))
+        glEnableVertexAttribArray(2)
+
+        # Texture Coord (location = 1)
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * 4, ctypes.c_void_p(6 * 4))
         glEnableVertexAttribArray(1)
+
 
         # Generate and bind Element Buffer Object (for indexed drawing)
         self.ebo = glGenBuffers(1)

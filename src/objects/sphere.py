@@ -28,14 +28,15 @@ class Sphere:
 
     def build_sphere_points(self):
         """
-        Generate vertex positions and texture coordinates for the sphere.
+        Generate vertex positions, texture coordinates, and normals for the sphere.
 
         Returns:
             tuple:
                 - xy_coords (list of float): Flattened list of 3D vertex positions [x, y, z].
                 - tex_coords (list of float): Flattened list of 2D texture coordinates [u, v].
+                - normals (list of float): Flattened list of normal vectors [nx, ny, nz].
         """
-        xy_coords, tex_coords = [], []
+        xy_coords, tex_coords, normals = [], [], []
 
         theta_step = 2 * np.pi / self.sectors
         phi_step = np.pi / self.stacks
@@ -50,28 +51,38 @@ class Sphere:
                 x = xy * math.cos(theta)
                 y = xy * math.sin(theta)
 
+                # Position
                 xy_coords.extend([x, y, z])
+                # Texture Coord
                 tex_coords.extend([j / self.sectors, i / self.stacks])
+                # Normal (normalized position for sphere)
+                length = math.sqrt(x * x + y * y + z * z)
+                nx, ny, nz = x / length, y / length, z / length
+                normals.extend([nx, ny, nz])
 
-        return xy_coords, tex_coords
+        return xy_coords, tex_coords, normals
 
-    def combine_coordinates(self, xy_coords, tex_coords):
+
+    def combine_coordinates(self, xy_coords, tex_coords, normals):
         """
-        Combine vertex positions and texture coordinates into a single buffer.
+        Combine vertex positions, normals, and texture coordinates into a single buffer.
 
         Args:
             xy_coords (list of float): Flattened list of 3D vertex positions.
             tex_coords (list of float): Flattened list of 2D texture coordinates.
+            normals (list of float): Flattened list of 3D normals.
 
         Returns:
-            np.ndarray: Flattened array of combined vertex attributes [x, y, z, u, v].
+            np.ndarray: Flattened array of combined vertex attributes [x, y, z, nx, ny, nz, u, v].
         """
         xy_coords = np.asarray(xy_coords, dtype=np.float32).reshape(-1, 3)
         tex_coords = np.asarray(tex_coords, dtype=np.float32).reshape(-1, 2)
+        normals = np.asarray(normals, dtype=np.float32).reshape(-1, 3)
         vertex_data = (
-            np.column_stack((xy_coords, tex_coords)).flatten().astype(np.float32)
+            np.column_stack((xy_coords, normals, tex_coords)).flatten().astype(np.float32)
         )
         return vertex_data
+
 
     def build_indices(self):
         """

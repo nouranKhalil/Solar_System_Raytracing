@@ -33,7 +33,7 @@ This course project involves building a ray tracer that simulates and renders th
 - `transformation.py`: Applies position and rotation transformations.
 - `saturn_ring.py`: Generates and textures Saturn's ring.
 - `effects/skybox.py`: Displays background stars using a skybox.
-- <span style="color: red;">`sun_glow.py`: Adds a billboard-based radiant glow for the sun.</span>
+- `sun_glow.py`: Adds a billboard-based radiant glow for the sun.
 - `json_parser.py`: Parses camera and simulation parameters from input JSON.
 - `utils/window_renderer.py`: Manages OpenGL context and shaders.
 - `camera.py`: Handles camera movement and view matrix logic.
@@ -88,13 +88,19 @@ This course project involves building a ray tracer that simulates and renders th
 
 ## Images
 
+![wide full scene image](Images/Wide%20shot/wide_shot.png)
+![close full scene image](Images/Close%20up%20shot/close_shot.png)
+
 `Note: This is an image before applying ray tracing from running the main script.`
 
 ![full scene image before ray tracing](image.png)
 
 ## Video
+<div align="center">
 
-[video of the scene after ray tracing](https://github.com/user-attachments/assets/cef729d7-82ca-4112-be1a-e9ff3d4ebb36)
+[video of the scene after ray tracing](https://github.com/user-attachments/assets/4992fbad-db3a-40f8-9de8-524366e8310e)
+
+</div>
 
 ## Resources
 
